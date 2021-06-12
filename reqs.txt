@@ -1,0 +1,7 @@
+math
+scipy
+datetime
+yfinance
+statistics
+pandas
+numpy
