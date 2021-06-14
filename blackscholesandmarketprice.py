@@ -3,6 +3,7 @@ from scipy.stats import norm
 from datetime import datetime
 import yfinance as yf
 import statistics as stat
+import csv
 
 
 def get_spot_price(ticker):
@@ -95,11 +96,13 @@ def get_option_market_data(ticker, maturity, put_or_call_flag, strike):
         exit(1)
 
 
-def main(ticker, put_or_call_flag, standard_deviation_period, strike, expiration_date, rfr, div_yield):
-    # Set risk free rate (can define method for this later)
-    risk_free_rate = rfr                        # Will define a method for this later
-    # Set dividend yield
-    returned_get_dividend_yield = div_yield     # Will define a method for this later
+def main(ticker, put_or_call_flag, standard_deviation_period, strike_price, expiration_date, rfr, div_yield):
+    # Set risk free rate type into float
+    risk_free_rate = float(rfr)                               # Will define a method for this later
+    # Set dividend yield type into float
+    returned_get_dividend_yield = float(div_yield)            # Will define a method for this later
+    # Set strike price into float
+    strike = float(strike_price)
     # Derive option prices
     bsm_price = bsm_calculation(put_or_call_flag,                                           # Call or put flag
                                 get_spot_price(ticker),                                     # Spot price
@@ -114,6 +117,7 @@ def main(ticker, put_or_call_flag, standard_deviation_period, strike, expiration
                                                 put_or_call_flag,                           # Call or put flag
                                                 strike)                                     # Strike Price
     # Print ticker and spot to console
+    '''
     print('{} $ {} USD'.format(ticker.upper(), get_spot_price(ticker)))
     print('Volatility over {} sample'.format(standard_deviation_period))
     print('Annualized volatility {}'.format(get_standard_deviation(ticker, standard_deviation_period)))
@@ -127,9 +131,25 @@ def main(ticker, put_or_call_flag, standard_deviation_period, strike, expiration
     else:
         print('{} not a valid flag'.format(put_or_call_flag))
     # Print option data to console
+    '''
     print('------------------------------------- Option chain -------------------------------------')
     print(option_market_data.to_string())
 
 
+### BULK OPTION PRICING: using a CSV file - located in the same directory as this script - with the following fields for every row:
 # ticker  # put_or_call_flag  # standard_deviation_period  # strike  # expiration_date  # rfr  # div_yield
-main('fb', 'P', '6mo', 245, '2021-01-14', 0, 0)
+# Importing csv file containing option parameters and passing them into our list
+'''
+with open('file.csv') as f:
+    reader = csv.reader(f)
+    optionParamList = list(reader)
+# print(optionParamList)
+for optionParam in optionParamList:
+    # Unpacking option data and passing to main
+    main(*optionParam)
+'''
+
+
+### INDIVIDUAL OPTION PRICING: edit the following parameters and pass to main().
+# ticker  # put_or_call_flag  # standard_deviation_period  # strike  # expiration_date  # rfr  # div_yield
+main('fb', 'P', '6mo', '245', '2021-06-18', '0', '0')
